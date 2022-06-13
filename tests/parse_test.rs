@@ -35,3 +35,27 @@ fn test_parse_example_file() {
         .get(0);
     assert_eq!(subsys, "QUORUM");
 }
+
+#[test]
+fn test_datapath_get() {
+    let corosync_example = "
+        logging {
+            fileline: off
+            to_stderr: no
+            to_logfile: no
+            logfile: /var/log/cluster/corosync.log
+            to_syslog: yes
+            debug: off
+            timestamp: on
+            logger_subsys {
+                    subsys: QUORUM
+                    debug: off
+            }
+        }
+    "
+    .to_string();
+
+    let cfg = corosync_config_parser::parse(corosync_example).unwrap();
+    let subsys = cfg.path(vec!["logging", "logger_subsys", "subsys"]);
+    assert_eq!(subsys, Some("QUORUM"));
+}
