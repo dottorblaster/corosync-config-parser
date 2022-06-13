@@ -59,6 +59,20 @@ impl ConfigBlock {
             None
         }
     }
+
+    pub fn path<'a>(&'a self, keys: Vec<&'a str>) -> Option<&str> {
+        let last_config_block =
+            keys.iter()
+                .fold(Some(self), |accumulator, key| match accumulator {
+                    Some(config_block) => config_block.matching(key).nth(0),
+                    None => None,
+                });
+
+        match last_config_block {
+            Some(config_block) => Some(config_block.get(0)),
+            None => None,
+        }
+    }
 }
 
 pub struct ConfigIter<'a> {
